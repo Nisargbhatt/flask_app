@@ -1,24 +1,27 @@
-# example for setting cookie
+#this is for my temp practice
 
-from flask import Flask, render_template, request
-
+from flask import Flask, redirect, render_template, request, current_app
 app = Flask(__name__)
-
 @app.route('/')
-def ex_cookie():
+def cookie():
     return render_template('cookie.html')
 
 
-@app.route('/setcookie', methods = ['POST', 'GET'])
-def setcookie():
-    if request.method = 'POST':
-        name = request.form['nm']
-        rasp = make_response(render_template('readcookie.html'))
-        rasp = set_cookie('userID', user)
+@app.route('/login', methods = ['POST','GET'])
+def login():
+    if request.method == 'POST':
+        user_id = request.form['name']
+        redirect_to_welcome = redirect('/welcome')
+        response = current_app.make_response(redirect_to_welcome)
+        response.set_cookie('user_id', user_id)
+        return response
+    else:
+        return "hehehehehe"
 
-    return rasp    
+@app.route('/welcome')
+def welcome():
+    user_id = request.cookies.get('user_id')
+    return '<h1>welcome '+user_id+'</h1>'
 
-@app.route('/getcookie')
-def getcookie():
-   name = request.cookies.get('userID')
-   return '<h1>welcome '+name+'</h1>'
+if __name__ == ('__main__'):
+    app.run(debug=True)
